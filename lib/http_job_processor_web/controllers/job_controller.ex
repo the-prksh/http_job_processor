@@ -14,8 +14,9 @@ defmodule HttpJobProcessorWeb.JobController do
           title("Job")
           description("")
 
-          type(:array)
-          items(Schema.ref(:Task))
+          properties do
+            tasks(:array, "List of Task Details", items: Schema.ref(:Task), required: true)
+          end
 
           example(%{
             tasks: [

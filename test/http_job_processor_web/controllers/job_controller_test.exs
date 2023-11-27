@@ -152,8 +152,8 @@ defmodule HttpJobProcessorWeb.JobControllerTest do
 
       assert %{
                "error" => %{
-                 "message" => "Type mismatch. Expected Array but got Object.",
-                 "path" => "#"
+                 "message" => "Required property command was not present.",
+                 "path" => "#/tasks/1"
                }
              } == resp
     end
@@ -189,8 +189,8 @@ defmodule HttpJobProcessorWeb.JobControllerTest do
 
       assert %{
                "error" => %{
-                 "message" => "Type mismatch. Expected Array but got Object.",
-                 "path" => "#"
+                 "message" => "Required property name was not present.",
+                 "path" => "#/tasks/0"
                }
              } == resp
     end
@@ -213,7 +213,7 @@ defmodule HttpJobProcessorWeb.JobControllerTest do
 
       assert %{
                "error" => %{
-                 "message" => "Type mismatch. Expected Array but got Object.",
+                 "message" => "Required property tasks was not present.",
                  "path" => "#"
                }
              } == resp
