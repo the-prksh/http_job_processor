@@ -62,7 +62,7 @@ curl -X POST "http://localhost:4000/api/schedule" -H "accept: application/json" 
 ]
 ```
 
-#### 'text` content-type
+- 'text` content-type
 
 ```bash
 curl -X POST "http://localhost:4000/api/schedule" -H "accept: text/plain" -H "content-type: application/json" -d "{ \"tasks\": [ { \"command\": \"touch /tmp/file1\", \"name\": \"task-1\" }, { \"command\": \"cat /tmp/file1\", \"name\": \"task-2\", \"requires\": [ \"task-3\" ] }, { \"command\": \"echo 'Hello World!' > /tmp/file1\", \"name\": \"task-3\", \"requires\": [ \"task-1\" ] }, { \"command\": \"rm /tmp/file1\", \"name\": \"task-4\", \"requires\": [ \"task-2\", \"task-3\" ] } ]}"
