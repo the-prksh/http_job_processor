@@ -14,9 +14,8 @@ defmodule HttpJobProcessorWeb.JobController do
           title("Job")
           description("")
 
-          properties do
-            name(:string, "Task Name", required: true)
-          end
+          type(:array)
+          items(Schema.ref(:Task))
 
           example(%{
             tasks: [
@@ -49,7 +48,12 @@ defmodule HttpJobProcessorWeb.JobController do
           properties do
             name(:string, "Task Name", required: true)
             command(:string, "Command", required: true)
-            requires(:array, "list of task dependencies", items: :string)
+
+            requires(:array, "list of task dependencies",
+              items: %{
+                "type" => "string"
+              }
+            )
           end
 
           example(%{
@@ -68,6 +72,7 @@ defmodule HttpJobProcessorWeb.JobController do
     }
   end
 
+  # PhoenixSwagger.Validator.parse_swagger_schema( Path.join(["#{:code.priv_dir(:http_job_processor)}", "static", "swagger.json"]))
   swagger_path :create do
     post("/api/schedule")
     description("")

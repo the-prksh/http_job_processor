@@ -3,7 +3,7 @@ defmodule HttpJobProcessorWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json", "text"]
-    # plug PhoenixSwagger.Plug.Validate
+    plug PhoenixSwagger.Plug.Validate
   end
 
   def swagger_info do

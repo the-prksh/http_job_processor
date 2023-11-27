@@ -18,6 +18,11 @@ defmodule HttpJobProcessor.Application do
       # {HttpJobProcessor.Worker, arg}
     ]
 
+    _ignore =
+      PhoenixSwagger.Validator.parse_swagger_schema(
+        Path.join(["#{:code.priv_dir(:http_job_processor)}", "static", "swagger.json"])
+      )
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: HttpJobProcessor.Supervisor]
