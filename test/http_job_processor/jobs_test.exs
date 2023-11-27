@@ -5,7 +5,7 @@ defmodule HttpJobProcessor.JobsTest do
   alias HttpJobProcessor.Jobs
 
   describe "Testing Sorting Algorithm" do
-    test "with valid data", context do
+    test "with valid data", _context do
       tasks = [
         %{
           name: "task-1",
@@ -40,7 +40,7 @@ defmodule HttpJobProcessor.JobsTest do
              ] == Jobs.topological_sort(tasks)
     end
 
-    test "with invalid data, cyclic deps", context do
+    test "with invalid data, cyclic deps", _context do
       tasks = [
         %{
           name: "task-1",

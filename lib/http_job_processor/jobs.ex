@@ -23,8 +23,12 @@ defmodule HttpJobProcessor.Jobs do
   #   }
   # ]
   def schedule(tasks) do
-    tasks
-    |> topological_sort()
+    try do
+      {:ok, topological_sort(tasks)}
+    rescue
+      e in CyclicDepsError ->
+        {:error, e.message}
+    end
   end
 
   def topological_sort(tasks) do

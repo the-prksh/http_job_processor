@@ -2,11 +2,31 @@ defmodule HttpJobProcessorWeb.Router do
   use HttpJobProcessorWeb, :router
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "text"]
+    # plug PhoenixSwagger.Plug.Validate
+  end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "0.1",
+        title: "HTTP Job Schedular"
+      },
+      consumes: ["application/json"],
+      produces: ["application/json", "text/plain"]
+    }
   end
 
   scope "/api", HttpJobProcessorWeb do
     pipe_through :api
+
+    post "/schedule", JobController, :create
+  end
+
+  scope "/api/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI,
+      otp_app: :http_job_processor,
+      swagger_file: "swagger.json"
   end
 
   # Enable LiveDashboard in development

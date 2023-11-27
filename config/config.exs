@@ -11,7 +11,7 @@ import Config
 config :http_job_processor, HttpJobProcessorWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [
-    formats: [json: HttpJobProcessorWeb.ErrorJSON],
+    formats: [json: HttpJobProcessorWeb.ErrorJSON, text: HttpJobProcessorWeb.ErrorTEXT],
     layout: false
   ],
   pubsub_server: HttpJobProcessor.PubSub,
@@ -46,6 +46,20 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :http_job_processor, :phoenix_swagger,
+  swagger_files: %{
+    "priv/static/swagger.json" => [
+      router: HttpJobProcessorWeb.Router,
+      endpoint: HttpJobProcessorWeb.Endpoint
+    ]
+  }
+
+config :phoenix_swagger, json_library: Jason
+
+# config :mime, :types, %{
+#   "application/text" => ["text"]
+# }
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
