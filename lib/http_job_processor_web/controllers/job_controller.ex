@@ -17,6 +17,30 @@ defmodule HttpJobProcessorWeb.JobController do
           properties do
             name(:string, "Task Name", required: true)
           end
+
+          example(%{
+            tasks: [
+              %{
+                name: "task-1",
+                command: "touch /tmp/file1"
+              },
+              %{
+                name: "task-2",
+                command: "cat /tmp/file1",
+                requires: ["task-3"]
+              },
+              %{
+                name: "task-3",
+                command: "echo 'Hello World!' > /tmp/file1",
+                requires: ["task-1"]
+              },
+              %{
+                name: "task-4",
+                command: "rm /tmp/file1",
+                requires: ["task-2", "task-3"]
+              }
+            ]
+          })
         end,
       Task:
         swagger_schema do
@@ -44,38 +68,14 @@ defmodule HttpJobProcessorWeb.JobController do
     }
   end
 
-  swagger_path :schedule do
+  swagger_path :create do
     post("/api/schedule")
     description("")
     produces("application/json")
     produces("text/plain")
 
     parameters do
-      tasks(:body, Schema.ref(:JobScheduleRequest), "The Tasks Details.",
-        example: %{
-          tasks: [
-            %{
-              name: "task-1",
-              command: "touch /tmp/file1"
-            },
-            %{
-              name: "task-2",
-              command: "cat /tmp/file1",
-              requires: ["task-3"]
-            },
-            %{
-              name: "task-3",
-              command: "echo 'Hello World!' > /tmp/file1",
-              requires: ["task-1"]
-            },
-            %{
-              name: "task-4",
-              command: "rm /tmp/file1",
-              requires: ["task-2", "task-3"]
-            }
-          ]
-        }
-      )
+      tasks(:body, Schema.ref(:JobScheduleRequest), "The Tasks Details.")
     end
 
     response(200, "OK", Schema.ref(:JobScheduleResponse))
