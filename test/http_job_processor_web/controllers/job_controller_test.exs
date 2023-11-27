@@ -122,4 +122,101 @@ defmodule HttpJobProcessorWeb.JobControllerTest do
       assert "echo \"error-the Task Definition contains a cycle\"" == resp
     end
   end
+
+  describe "Schedule Tasks with missing task details, " do
+    setup _ctx do
+      {:ok,
+       payload: %{
+         tasks: [
+           %{
+             name: "task-1",
+             command: "touch /tmp/file1"
+           },
+           %{
+             name: "task-2",
+             requires: ["task-1"]
+           }
+         ]
+       }}
+    end
+
+    test "when data is invalid and json response content-type.", %{
+      conn: conn,
+      payload: payload
+    } do
+      resp =
+        conn
+        |> put_req_header("accept", "application/json")
+        |> post(~p"/api/schedule", payload)
+        |> json_response(400)
+
+      assert %{
+               "error" => %{
+                 "message" => "Type mismatch. Expected Array but got Object.",
+                 "path" => "#"
+               }
+             } == resp
+    end
+  end
+
+  describe "Schedule Tasks with invalid task details, " do
+    setup _ctx do
+      {:ok,
+       payload: %{
+         tasks: [
+           %{
+             command_name: "task-1",
+             command: "touch /tmp/file1"
+           },
+           %{
+             name: "task-2",
+             command: "rm /tmp/file1",
+             requires: ["task-1"]
+           }
+         ]
+       }}
+    end
+
+    test "when data is invalid and json response content-type.", %{
+      conn: conn,
+      payload: payload
+    } do
+      resp =
+        conn
+        |> put_req_header("accept", "application/json")
+        |> post(~p"/api/schedule", payload)
+        |> json_response(400)
+
+      assert %{
+               "error" => %{
+                 "message" => "Type mismatch. Expected Array but got Object.",
+                 "path" => "#"
+               }
+             } == resp
+    end
+  end
+
+  describe "Schedule Tasks without tasks, " do
+    setup _ctx do
+      {:ok, payload: %{}}
+    end
+
+    test "when data is invalid and json response content-type.", %{
+      conn: conn,
+      payload: payload
+    } do
+      resp =
+        conn
+        |> put_req_header("accept", "application/json")
+        |> post(~p"/api/schedule", payload)
+        |> json_response(400)
+
+      assert %{
+               "error" => %{
+                 "message" => "Type mismatch. Expected Array but got Object.",
+                 "path" => "#"
+               }
+             } == resp
+    end
+  end
 end
