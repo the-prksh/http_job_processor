@@ -10,7 +10,18 @@ defmodule HttpJobProcessor.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      compilers: Mix.compilers() ++ [:phoenix_swagger]
+      compilers: Mix.compilers() ++ [:phoenix_swagger],
+      dialyzer: [
+        plt_add_apps: [:http_job_processor, :ex_unit, :mix],
+        flags: [
+          "-Wunmatched_returns",
+          :error_handling,
+          :underspecs,
+          "-Wno_match",
+          "-Wextra_return",
+          "-Wunknown"
+        ]
+      ]
     ]
   end
 
@@ -42,7 +53,8 @@ defmodule HttpJobProcessor.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:phoenix_swagger, "~> 0.8"},
-      {:ex_json_schema, "~> 0.10.2"}
+      {:ex_json_schema, "~> 0.10.2"},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 
