@@ -97,39 +97,39 @@ defmodule HttpJobProcessor.Jobs do
   """
   def topological_sort(tasks) do
     %{ordered: ordered} =
-      for task <- tasks, reduce: %{visited: [], ordered: []} do
+      for task <- tasks, reduce: %{visited: MapSet.new(), ordered: []} do
         %{visited: visited, ordered: ordered} = acc ->
-          if task.name in visited do
+          if MapSet.member?(visited, task.name) do
             acc
           else
-            dfs(task, tasks, visited, ordered, [])
+            dfs(task, tasks, visited, ordered, MapSet.new())
           end
       end
 
     Enum.reverse(ordered)
   end
 
-  defp dfs(%{name: name} = task, task_list, visited, ordered, cyclic_check) do
-    if task.name in cyclic_check do
+  defp dfs(task, task_list, visited, ordered, cyclic_check) do
+    if MapSet.member?(cyclic_check, task.name) do
       raise(CyclicDepsError, "")
     end
 
-    with {:visited, false} <- {:visited, task.name in visited},
+    with {:visited, false} <- {:visited, MapSet.member?(visited, task.name)},
          {:deps_nil, false} <- {:deps_nil, is_nil(task[:requires])} do
-      visited = [name | visited]
+      visited = MapSet.put(visited, task.name)
 
       temp =
         for dep <- task.requires, reduce: %{visited: visited, ordered: ordered} do
           %{visited: visited, ordered: ordered} ->
             task_list
             |> Enum.find(fn t -> t.name == dep end)
-            |> dfs(task_list, visited, ordered, [task.name | cyclic_check])
+            |> dfs(task_list, visited, ordered, MapSet.put(cyclic_check, task.name))
         end
 
       %{visited: temp.visited, ordered: [task | temp.ordered]}
     else
       {:visited, true} -> %{visited: visited, ordered: ordered}
-      {:deps_nil, true} -> %{visited: [name | visited], ordered: [task | ordered]}
+      {:deps_nil, true} -> %{visited: MapSet.put(visited, task.name), ordered: [task | ordered]}
     end
   end
 end
