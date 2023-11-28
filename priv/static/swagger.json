@@ -1,0 +1,138 @@
+{
+  "info": {
+    "version": "0.1",
+    "title": "HTTP Job Schedular"
+  },
+  "host": "localhost:4000",
+  "definitions": {
+    "Task": {
+      "example": {
+        "command": "touch /tmp/file",
+        "name": "task-1",
+        "requires": [
+          "task-3"
+        ]
+      },
+      "properties": {
+        "command": {
+          "description": "Command",
+          "type": "string"
+        },
+        "name": {
+          "description": "Task Name",
+          "type": "string"
+        },
+        "requires": {
+          "description": "list of task dependencies",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "command",
+        "name"
+      ],
+      "title": "Job",
+      "type": "object"
+    },
+    "JobScheduleRequest": {
+      "description": "",
+      "example": {
+        "tasks": [
+          {
+            "command": "touch /tmp/file1",
+            "name": "task-1"
+          },
+          {
+            "command": "cat /tmp/file1",
+            "name": "task-2",
+            "requires": [
+              "task-3"
+            ]
+          },
+          {
+            "command": "echo 'Hello World!' > /tmp/file1",
+            "name": "task-3",
+            "requires": [
+              "task-1"
+            ]
+          },
+          {
+            "command": "rm /tmp/file1",
+            "name": "task-4",
+            "requires": [
+              "task-2",
+              "task-3"
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "tasks": {
+          "description": "List of Task Details",
+          "items": {
+            "$ref": "#/definitions/Task"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "tasks"
+      ],
+      "title": "Job",
+      "type": "object"
+    },
+    "JobScheduleResponse": {
+      "title": "Job",
+      "type": "object"
+    }
+  },
+  "paths": {
+    "/api/schedule": {
+      "post": {
+        "description": "",
+        "operationId": "HttpJobProcessorWeb.JobController.create",
+        "parameters": [
+          {
+            "description": "The Tasks Details.",
+            "in": "body",
+            "name": "tasks",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/JobScheduleRequest"
+            }
+          }
+        ],
+        "produces": [
+          "application/json",
+          "text/plain"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/JobScheduleResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity."
+          }
+        },
+        "summary": "",
+        "tags": [
+          "Jobs"
+        ]
+      }
+    }
+  },
+  "swagger": "2.0",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json",
+    "text/plain"
+  ]
+}
