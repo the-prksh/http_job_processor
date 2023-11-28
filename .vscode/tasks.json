@@ -1,0 +1,42 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "options": {
+        "env": {}
+    },
+    "tasks": [
+        {
+            "label": "all",
+            "type": "shell",
+            "command": "mix test"
+        },
+        {
+            "label": "file",
+            "type": "shell",
+            "command": "mix test ${file}",
+            "runOptions": {
+                "reevaluateOnRerun": false
+            }
+        },
+        {
+            "label": "line",
+            "type": "shell",
+            "command": "mix test ${file}:${lineNumber}",
+            "runOptions": {
+                "reevaluateOnRerun": false
+            }
+        },
+        {
+            "type": "mix",
+            "task": "Run test at cursor",
+            "problemMatcher": [
+                "$mixCompileError",
+                "$mixCompileWarning",
+                "$mixTestFailure"
+            ],
+            "group": "test",
+            "label": "mix: Run test at cursor"
+        }
+    ]
+}
