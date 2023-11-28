@@ -1,4 +1,5 @@
 defmodule HttpJobProcessorWeb.JobTEXT do
+  @moduledoc false
   def create(%{tasks: tasks}) do
     commands_list =
       for task <- tasks, str = data(task), reduce: [] do

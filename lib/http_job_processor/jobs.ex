@@ -1,4 +1,5 @@
 defmodule HttpJobProcessor.Jobs do
+  @moduledoc false
   alias HttpJobProcessor.Jobs.Exceptions.CyclicDepsError
 
   @doc """
@@ -98,10 +99,10 @@ defmodule HttpJobProcessor.Jobs do
     %{ordered: ordered} =
       for task <- tasks, reduce: %{visited: [], ordered: []} do
         %{visited: visited, ordered: ordered} = acc ->
-          if task.name not in visited do
-            dfs(task, tasks, visited, ordered, [])
-          else
+          if task.name in visited do
             acc
+          else
+            dfs(task, tasks, visited, ordered, [])
           end
       end
 
@@ -113,24 +114,22 @@ defmodule HttpJobProcessor.Jobs do
       raise(CyclicDepsError, "")
     end
 
-    if(task.name not in visited) do
+    with {:visited, false} <- {:visited, task.name in visited},
+         {:deps_nil, false} <- {:deps_nil, is_nil(task[:requires])} do
       visited = [name | visited]
 
-      if is_nil(task[:requires]) do
-        %{visited: visited, ordered: [task | ordered]}
-      else
-        temp =
-          for dep <- task.requires, reduce: %{visited: visited, ordered: ordered} do
-            %{visited: visited, ordered: ordered} ->
-              task_list
-              |> Enum.find(fn t -> t.name == dep end)
-              |> dfs(task_list, visited, ordered, [task.name | cyclic_check])
-          end
+      temp =
+        for dep <- task.requires, reduce: %{visited: visited, ordered: ordered} do
+          %{visited: visited, ordered: ordered} ->
+            task_list
+            |> Enum.find(fn t -> t.name == dep end)
+            |> dfs(task_list, visited, ordered, [task.name | cyclic_check])
+        end
 
-        %{visited: temp.visited, ordered: [task | temp.ordered]}
-      end
+      %{visited: temp.visited, ordered: [task | temp.ordered]}
     else
-      %{visited: visited, ordered: ordered}
+      {:visited, true} -> %{visited: visited, ordered: ordered}
+      {:deps_nil, true} -> %{visited: [name | visited], ordered: [task | ordered]}
     end
   end
 end

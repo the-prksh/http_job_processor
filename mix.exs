@@ -54,7 +54,8 @@ defmodule HttpJobProcessor.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:phoenix_swagger, "~> 0.8"},
       {:ex_json_schema, "~> 0.10.2"},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 

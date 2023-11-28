@@ -91,8 +91,7 @@ defmodule HttpJobProcessorWeb.JobController do
   end
 
   def create(conn, params) do
-    with tasks = params["tasks"],
-         {:ok, tasks} <- tasks |> atomize_keys() |> Jobs.schedule() do
+    with {:ok, tasks} <- params["tasks"] |> atomize_keys() |> Jobs.schedule() do
       render(conn, :create, tasks: tasks)
     end
   end
