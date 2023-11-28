@@ -2,9 +2,8 @@
 
 Implementation of a Http Task Scheduling Service. 
 
-```text 
 A job is a collection of tasks, where each task has a name and a shell command. Tasks may depend on other tasks and require that those are executed beforehand. The service takes care of sorting the tasks to create a proper execution order.
-```
+
 
 ### Local Setup
 ```bash
